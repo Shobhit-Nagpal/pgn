@@ -24,4 +24,6 @@ const (
 
 	NAG    = "NAG"
 	SYMBOL = "SYMBOL"
+  
+  EOF = "EOF"
 )
