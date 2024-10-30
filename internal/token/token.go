@@ -13,6 +13,7 @@ const (
   PERCENTAGE = "%"
 	STRING  = "STRING"
 	INTEGER = "INTEGER"
+  ILLEGAL = "ILLEGAL"
 
 	LBRACKET = "["
 	RBRACKET = "]"

@@ -62,8 +62,16 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		tok.Type = token.EOF
 		tok.Literal = ""
+	default:
+		if isLetter(l.ch) || isDigit(l.ch) {
+			tok.Type = token.SYMBOL
+			tok.Literal - l.readSymbol()
+		} else {
+			tok = newToken(token.ILLEGAL, l.ch)
+		}
 	}
 
+	l.readChar()
 	return tok
 }
 
@@ -78,7 +86,7 @@ func (l *Lexer) skipWhitespace() {
 }
 
 func (l *Lexer) readString() string {
-	position := l.readPosition + 1
+	position := l.position + 1
 	for {
 		l.readChar()
 		if l.ch == '"' || l.ch == 0 {
@@ -93,6 +101,16 @@ func (l *Lexer) readNAG() string {
 	position := l.position + 1
 
 	for isDigit(l.ch) {
+		l.readChar()
+	}
+
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) readSymbol() string {
+	position := l.position
+
+	for isDigit(l.ch) || isLetter(l.ch) || isSpecialChar(l.ch) {
 		l.readChar()
 	}
 
