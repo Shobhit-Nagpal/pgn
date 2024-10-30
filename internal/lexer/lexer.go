@@ -4,9 +4,9 @@ import "github.com/Shobhit-Nagpal/pgn/internal/token"
 
 type Lexer struct {
 	input        string
-	position     int //Current position
-	readPosition int //Position to read (after current position)
-	ch           byte //Current character under examination
+	position     int  // Current position
+	readPosition int  // Position to read (after current position)
+	ch           byte // Current character under examination
 }
 
 func New(input string) *Lexer {
@@ -49,11 +49,16 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.RPAREN, l.ch)
 	case '<':
 		tok = newToken(token.LANGLE, l.ch)
+	case '%':
+		tok = newToken(token.PERCENTAGE, l.ch)
 	case '>':
 		tok = newToken(token.RANGLE, l.ch)
 	case '"':
 		tok.Type = token.STRING
 		tok.Literal = l.readString()
+	case '$':
+		tok.Type = token.NAG
+		tok.Literal = l.readNAG()
 	case 0:
 		tok.Type = token.EOF
 		tok.Literal = ""
@@ -79,6 +84,20 @@ func (l *Lexer) readString() string {
 		if l.ch == '"' || l.ch == 0 {
 			break
 		}
+	}
+
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) readNAG() string {
+
+  // Current position is on the $ token
+  l.readChar()
+
+	position := l.position
+
+	for isDigit(l.ch) {
+		l.readChar()
 	}
 
 	return l.input[position:l.position]
