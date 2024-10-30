@@ -90,11 +90,7 @@ func (l *Lexer) readString() string {
 }
 
 func (l *Lexer) readNAG() string {
-
-  // Current position is on the $ token
-  l.readChar()
-
-	position := l.position
+	position := l.position + 1
 
 	for isDigit(l.ch) {
 		l.readChar()

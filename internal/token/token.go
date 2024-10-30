@@ -11,7 +11,6 @@ const (
 	PERIOD  = "."
 	ASTERIX = "*"
   PERCENTAGE = "%"
-  DOLLAR = "$"
 	STRING  = "STRING"
 	INTEGER = "INTEGER"
 
