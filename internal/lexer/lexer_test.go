@@ -16,7 +16,7 @@ func TestNextToken(t *testing.T) {
   [Black "Spassky, Boris V."]
   [Result "1/2-1/2"]
 
-  1. e4 e5 2. Nf3 Nc6
+  1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7
   `
 
 	tests := []struct {
@@ -59,6 +59,18 @@ func TestNextToken(t *testing.T) {
 		{token.PERIOD, "."},
 		{token.SYMBOL, "Nf3"},
 		{token.SYMBOL, "Nc6"},
+		{token.INTEGER, "3"},
+		{token.PERIOD, "."},
+		{token.SYMBOL, "Bb5"},
+		{token.SYMBOL, "a6"},
+		{token.INTEGER, "4"},
+		{token.PERIOD, "."},
+		{token.SYMBOL, "Ba4"},
+		{token.SYMBOL, "Nf6"},
+		{token.INTEGER, "5"},
+		{token.PERIOD, "."},
+		{token.SYMBOL, "O-O"},
+		{token.SYMBOL, "Be7"},
 		{token.EOF, ""},
 	}
 
