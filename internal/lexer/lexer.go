@@ -1,6 +1,8 @@
 package lexer
 
-import "github.com/Shobhit-Nagpal/pgn/internal/token"
+import (
+	"github.com/Shobhit-Nagpal/pgn/internal/token"
+)
 
 type Lexer struct {
 	input        string
@@ -19,7 +21,7 @@ func New(input string) *Lexer {
 }
 
 func (l *Lexer) readChar() {
-	if l.readPosition > len(l.input) {
+	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
 		l.ch = l.input[l.readPosition]
@@ -64,8 +66,7 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Literal = ""
 	default:
 		if isLetter(l.ch) || isDigit(l.ch) {
-			tok.Type = token.SYMBOL
-			tok.Literal - l.readSymbol()
+			tok.Literal, tok.Type = l.readSymbolOrInteger()
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
@@ -107,12 +108,40 @@ func (l *Lexer) readNAG() string {
 	return l.input[position:l.position]
 }
 
-func (l *Lexer) readSymbol() string {
+func (l *Lexer) readSymbolOrInteger() (string, token.TokenType) {
+  flag := false
 	position := l.position
 
 	for isDigit(l.ch) || isLetter(l.ch) || isSpecialChar(l.ch) {
+		if l.peekChar() == '.' {
+      flag = true
+			break
+		}
+
 		l.readChar()
 	}
 
-	return l.input[position:l.position]
+  var tokenLiteral string
+
+  if flag {
+    tokenLiteral = l.input[position:l.readPosition]
+  } else {
+    tokenLiteral = l.input[position:l.position]
+  }
+
+	isInteger := isDigitsOnly(tokenLiteral)
+
+	if isInteger {
+		return tokenLiteral, token.INTEGER
+	}
+
+	return tokenLiteral, token.SYMBOL
+}
+
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
 }
