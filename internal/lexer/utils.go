@@ -10,7 +10,7 @@ func isLetter(ch byte) bool {
 
 func isSpecialChar(ch byte) bool {
 	switch ch {
-	case '_', '+', '#', '=', ':', '-':
+	case '_', '+', '#', '=', ':', '-', '/':
 		return true
 	default:
 		return false
