@@ -1,8 +1,4 @@
-package lexer
-
-import (
-	"github.com/Shobhit-Nagpal/pgn/internal/token"
-)
+package pgn
 
 type Lexer struct {
 	input        string
@@ -31,44 +27,44 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
-func (l *Lexer) NextToken() token.Token {
-	var tok token.Token
+func (l *Lexer) NextToken() Token {
+	var tok Token
 
 	l.skipWhitespace()
 
 	switch l.ch {
 	case '.':
-		tok = newToken(token.PERIOD, l.ch)
+		tok = newToken(PERIOD, l.ch)
 	case '*':
-		tok = newToken(token.ASTERIX, l.ch)
+		tok = newToken(ASTERIX, l.ch)
 	case '[':
-		tok = newToken(token.LBRACKET, l.ch)
+		tok = newToken(LBRACKET, l.ch)
 	case ']':
-		tok = newToken(token.RBRACKET, l.ch)
+		tok = newToken(RBRACKET, l.ch)
 	case '(':
-		tok = newToken(token.LPAREN, l.ch)
+		tok = newToken(LPAREN, l.ch)
 	case ')':
-		tok = newToken(token.RPAREN, l.ch)
+		tok = newToken(RPAREN, l.ch)
 	case '<':
-		tok = newToken(token.LANGLE, l.ch)
+		tok = newToken(LANGLE, l.ch)
 	case '%':
-		tok = newToken(token.PERCENTAGE, l.ch)
+		tok = newToken(PERCENTAGE, l.ch)
 	case '>':
-		tok = newToken(token.RANGLE, l.ch)
+		tok = newToken(RANGLE, l.ch)
 	case '"':
-		tok.Type = token.STRING
+		tok.Type = STRING
 		tok.Literal = l.readString()
 	case '$':
-		tok.Type = token.NAG
+		tok.Type = NAG
 		tok.Literal = l.readNAG()
 	case 0:
-		tok.Type = token.EOF
+		tok.Type = EOF
 		tok.Literal = ""
 	default:
 		if isLetter(l.ch) || isDigit(l.ch) {
 			tok.Literal, tok.Type = l.readSymbolOrInteger()
 		} else {
-			tok = newToken(token.ILLEGAL, l.ch)
+			tok = newToken(ILLEGAL, l.ch)
 		}
 	}
 
@@ -76,8 +72,8 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token{Type: tokenType, Literal: string(ch)}
+func newToken(tokenType TokenType, ch byte) Token {
+	return Token{Type: tokenType, Literal: string(ch)}
 }
 
 func (l *Lexer) skipWhitespace() {
@@ -108,7 +104,7 @@ func (l *Lexer) readNAG() string {
 	return l.input[position:l.position]
 }
 
-func (l *Lexer) readSymbolOrInteger() (string, token.TokenType) {
+func (l *Lexer) readSymbolOrInteger() (string, TokenType) {
   flag := false
 	position := l.position
 
@@ -132,10 +128,10 @@ func (l *Lexer) readSymbolOrInteger() (string, token.TokenType) {
 	isInteger := isDigitsOnly(tokenLiteral)
 
 	if isInteger {
-		return tokenLiteral, token.INTEGER
+		return tokenLiteral, INTEGER
 	}
 
-	return tokenLiteral, token.SYMBOL
+	return tokenLiteral, SYMBOL
 }
 
 func (l *Lexer) peekChar() byte {

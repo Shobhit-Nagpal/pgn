@@ -1,4 +1,4 @@
-package lexer
+package pgn
 
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
