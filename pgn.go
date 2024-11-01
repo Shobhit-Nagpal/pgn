@@ -7,7 +7,7 @@ import (
 
 type Game struct {
 	tags   map[string]string
-	moves  []*Move
+	moves  map[int]*Move
 	result string
 }
 
@@ -23,6 +23,10 @@ func (g *Game) SetTag(tag, value string) error {
 	g.tags[tag] = value
 
 	return nil
+}
+
+func (g *Game) TagPairs() map[string]string {
+	return g.tags
 }
 
 func (g *Game) Event() string {
@@ -54,9 +58,13 @@ func (g *Game) Result() string {
 }
 
 func (g *Game) GetMove(number int) *Move {
-	if number > len(g.moves) {
-		return nil
-	}
+	return g.moves[number]
+}
 
-	return g.moves[number-1]
+func (g *Game) SetMove(number int, move *Move) {
+	g.moves[number] = move
+}
+
+func (g *Game) Moves() map[int]*Move {
+	return g.moves
 }

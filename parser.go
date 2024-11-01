@@ -2,6 +2,8 @@ package pgn
 
 import (
 	"fmt"
+	"log"
+	"strconv"
 )
 
 type Parser struct {
@@ -28,7 +30,7 @@ func NewParser(l *Lexer) *Parser {
 func (p *Parser) ParsePGN() *Game {
 	game := &Game{
 		tags:  map[string]string{},
-		moves: []*Move{},
+		moves: map[int]*Move{},
 	}
 
 	for p.currToken.Type != EOF {
@@ -38,7 +40,7 @@ func (p *Parser) ParsePGN() *Game {
 			case *TagPair:
 				game.SetTag(v.Name(), v.Value())
 			case *Move:
-        game.moves = append(game.moves, v)
+				game.SetMove(v.Number(), v)
 			}
 		}
 	}
@@ -74,36 +76,40 @@ func (p *Parser) parseTagPair() *TagPair {
 
 	tp.TagValue = p.currToken.TokenLiteral()
 
-	if p.peekTokenIs(RBRACKET) {
-		p.nextToken()
+	if p.expectPeek(RBRACKET) {
 		tp.RBracket = p.currToken
 	}
+
+	p.nextToken()
 
 	return tp
 }
 
 func (p *Parser) parseMove() *Move {
+
+	moveNumInt, err := strconv.Atoi(p.currToken.TokenLiteral())
+  if err != nil {
+    log.Fatalf("Couldn't convert string to integer for moves: %s", p.currToken.TokenLiteral())
+  }
+
 	move := &Move{
-		MoveNumber: p.currToken.TokenLiteral(),
+		MoveNumber: moveNumInt,
 	}
 
 	//Zero or more periods
-	for p.peekTokenIs(PERIOD) {
-		p.nextToken()
+	if !p.expectPeek(PERIOD) {
+		return nil
 	}
 
-	p.nextToken()
-
-	if !p.expectPeek(SYMBOL) || !p.expectPeek(ASTERIX) {
+	if !p.expectPeek(SYMBOL) {
 		return nil
 	}
 
 	move.MoveWhite = p.currToken.TokenLiteral()
-	move.MoveBlack = p.currToken.TokenLiteral()
+	p.nextToken()
 
-	if !p.expectPeek(INTEGER) {
-		return nil
-	}
+	move.MoveBlack = p.currToken.TokenLiteral()
+	p.nextToken()
 
 	return move
 }

@@ -11,12 +11,12 @@ type Stmt interface {
 // Move
 
 type Move struct {
-	MoveNumber      string
+	MoveNumber      int
 	MoveWhite       string
 	MoveBlack       string
 }
 
-func (m Move) Number() string {
+func (m Move) Number() int {
 	return m.MoveNumber
 }
 
