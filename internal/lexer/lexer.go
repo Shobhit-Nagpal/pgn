@@ -113,7 +113,7 @@ func (l *Lexer) readSymbolOrInteger() (string, token.TokenType) {
 	position := l.position
 
 	for isDigit(l.ch) || isLetter(l.ch) || isSpecialChar(l.ch) {
-		if l.peekChar() == '.' {
+		if l.peekChar() == '.' || l.peekChar() == '*' {
       flag = true
 			break
 		}

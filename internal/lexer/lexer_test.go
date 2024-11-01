@@ -228,7 +228,8 @@ func TestNextToken(t *testing.T) {
 		{token.INTEGER, "43"},
 		{token.PERIOD, "."},
     {token.SYMBOL, "Re6"},
-		{token.SYMBOL, "1/2-1/2"},
+		{token.SYMBOL, "1-0"},
+		{token.ASTERIX, "*"},
 		{token.EOF, ""},
 	}
 
