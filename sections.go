@@ -1,8 +1,38 @@
 package pgn
 
-import (
-	"fmt"
-)
+import "fmt"
+
+type Stmt interface {
+  Type() string
+}
+
+
+
+// Move
+
+type Move struct {
+	MoveNumber      string
+	MoveWhite       string
+	MoveBlack       string
+}
+
+func (m Move) Number() string {
+	return m.MoveNumber
+}
+
+func (m Move) White() string {
+	return m.MoveWhite
+}
+
+func (m Move) Black() string {
+	return m.MoveBlack
+}
+
+func (m Move) Type() string {
+  return MOVE
+}
+
+//Tag Pair
 
 type TagPair struct {
 	LBracket Token
@@ -21,6 +51,10 @@ func (tp TagPair) Value() string {
 
 func (tp TagPair) Stringify() string {
 	return fmt.Sprintf("%s%s %s%s", tp.LBracket.TokenLiteral(), tp.TagName, tp.TagValue, tp.RBracket.TokenLiteral())
+}
+
+func (tp TagPair) Type() string {
+  return TAG_PAIR
 }
 
 // The same tag name should not appear more than once in a tag pair section.

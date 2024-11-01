@@ -18,11 +18,19 @@ func isSpecialChar(ch byte) bool {
 }
 
 func isDigitsOnly(s string) bool {
-    for _, c := range s {
-        if c < '0' || c > '9' {
-            return false
-        }
-    }
-    return true
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return false
+		}
+	}
+	return true
 }
 
+func isGameResult(result string) bool {
+	switch result {
+	case "1-0", "0-1", "1/2-1/2", "*":
+		return true
+	default:
+		return false
+	}
+}
