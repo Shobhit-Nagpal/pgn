@@ -18,9 +18,9 @@ func TestTagPairs(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := New(tt.input)
+		l := NewLexer(tt.input)
 		p := NewParser(l)
-		game := p.ParsePGN()
+		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
 		if value, exists := game.TagPairs()[tt.expectedName]; !exists {
@@ -49,9 +49,9 @@ func TestGetTag(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := New(tt.input)
+		l := NewLexer(tt.input)
 		p := NewParser(l)
-		game := p.ParsePGN()
+		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
 		if got := game.GetTag(tt.expectedName); got != tt.expectedValue {
@@ -77,9 +77,9 @@ func TestMoves(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := New(tt.input)
+		l := NewLexer(tt.input)
 		p := NewParser(l)
-		game := p.ParsePGN()
+		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
 		if got := game.GetMove(tt.expectedMoveNumber).White(); got != tt.expectedMoveWhite {
@@ -120,9 +120,9 @@ func TestMovesWithNoPeriods(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := New(tt.input)
+		l := NewLexer(tt.input)
 		p := NewParser(l)
-		game := p.ParsePGN()
+		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
 		if got := game.GetMove(tt.expectedMoveNumber).White(); got != tt.expectedMoveWhite {
@@ -149,9 +149,9 @@ func TestMovesWithThreePeriods(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := New(tt.input)
+		l := NewLexer(tt.input)
 		p := NewParser(l)
-		game := p.ParsePGN()
+		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
 		if got := game.GetMove(tt.expectedMoveNumber).White(); got != tt.expectedMoveWhite {
@@ -362,9 +362,9 @@ func TestCompletePGN(t *testing.T) {
 		},
 	}
 
-	l := New(input)
+	l := NewLexer(input)
 	p := NewParser(l)
-	game := p.ParsePGN()
+	game, _ := p.ParsePGN()
 	checkParserErrors(t, p)
 
 	for expectedKey, expectedValue := range expectedTags {
@@ -374,8 +374,6 @@ func TestCompletePGN(t *testing.T) {
 			t.Errorf("tag %q has wrong value. got=%q, want=%q",
 				expectedKey, value, expectedValue)
 		}
-
-		t.Logf("%s, %s", expectedKey, game.TagPairs()[expectedKey])
 	}
 
 	for expectedMoveNumber, expectedValue := range expectedMoves {

@@ -7,7 +7,7 @@ type Lexer struct {
 	ch           byte // Current character under examination
 }
 
-func New(input string) *Lexer {
+func NewLexer(input string) *Lexer {
 	l := &Lexer{
 		input: input,
 	}
@@ -105,25 +105,25 @@ func (l *Lexer) readNAG() string {
 }
 
 func (l *Lexer) readSymbolOrInteger() (string, TokenType) {
-  flag := false
+	flag := false
 	position := l.position
 
 	for isDigit(l.ch) || isLetter(l.ch) || isSpecialChar(l.ch) {
 		if l.peekChar() == '.' || l.peekChar() == '*' {
-      flag = true
+			flag = true
 			break
 		}
 
 		l.readChar()
 	}
 
-  var tokenLiteral string
+	var tokenLiteral string
 
-  if flag {
-    tokenLiteral = l.input[position:l.readPosition]
-  } else {
-    tokenLiteral = l.input[position:l.position]
-  }
+	if flag {
+		tokenLiteral = l.input[position:l.readPosition]
+	} else {
+		tokenLiteral = l.input[position:l.position]
+	}
 
 	isInteger := isDigitsOnly(tokenLiteral)
 

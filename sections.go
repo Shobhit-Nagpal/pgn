@@ -3,17 +3,15 @@ package pgn
 import "fmt"
 
 type Stmt interface {
-  Type() string
+	Type() string
 }
-
-
 
 // Move
 
 type Move struct {
-	MoveNumber      int
-	MoveWhite       string
-	MoveBlack       string
+	MoveNumber int
+	MoveWhite  string
+	MoveBlack  string
 }
 
 func (m Move) Number() int {
@@ -29,11 +27,11 @@ func (m Move) Black() string {
 }
 
 func (m Move) Type() string {
-  return MOVE
+	return MOVE
 }
 
 func (m Move) String() string {
-  return fmt.Sprintf("%d. %s %s", m.MoveNumber, m.MoveWhite, m.MoveBlack)
+	return fmt.Sprintf("%d. %s %s", m.MoveNumber, m.MoveWhite, m.MoveBlack)
 }
 
 //Tag Pair
@@ -58,7 +56,7 @@ func (tp TagPair) Stringify() string {
 }
 
 func (tp TagPair) Type() string {
-  return TAG_PAIR
+	return TAG_PAIR
 }
 
 // The same tag name should not appear more than once in a tag pair section.
@@ -81,5 +79,5 @@ func (gt GameTermination) Value() string {
 }
 
 func (gt GameTermination) Type() string {
-  return TERMINATION
+	return TERMINATION
 }

@@ -8,16 +8,16 @@ type Token struct {
 }
 
 func (t Token) TokenLiteral() string {
-  return t.Literal
+	return t.Literal
 }
 
 const (
-	PERIOD  = "."
-	ASTERIX = "*"
-  PERCENTAGE = "%"
-	STRING  = "STRING"
-	INTEGER = "INTEGER"
-  ILLEGAL = "ILLEGAL"
+	PERIOD     = "."
+	ASTERIX    = "*"
+	PERCENTAGE = "%"
+	STRING     = "STRING"
+	INTEGER    = "INTEGER"
+	ILLEGAL    = "ILLEGAL"
 
 	LBRACKET = "["
 	RBRACKET = "]"
@@ -30,6 +30,6 @@ const (
 
 	NAG    = "NAG"
 	SYMBOL = "SYMBOL"
-  
-  EOF = "EOF"
+
+	EOF = "EOF"
 )

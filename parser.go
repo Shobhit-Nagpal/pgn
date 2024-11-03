@@ -27,7 +27,7 @@ func NewParser(l *Lexer) *Parser {
 	return p
 }
 
-func (p *Parser) ParsePGN() *Game {
+func (p *Parser) ParsePGN() (*Game, error) {
 	game := &Game{
 		tags:  map[string]string{},
 		moves: map[int]*Move{},
@@ -47,7 +47,11 @@ func (p *Parser) ParsePGN() *Game {
 		}
 	}
 
-	return game
+	if len(p.Errors()) > 0 {
+		return nil, fmt.Errorf("parsing errors: %v", p.Errors())
+	}
+
+	return game, nil
 }
 
 func (p *Parser) parseStatement() Stmt {
@@ -58,9 +62,9 @@ func (p *Parser) parseStatement() Stmt {
 		return p.parseMove()
 	case SYMBOL:
 		if isGameResult(p.currToken.TokenLiteral()) {
-      gt := &GameTermination{TerminationValue: p.currToken.TokenLiteral()}
-      p.nextToken()
-      return gt
+			gt := &GameTermination{TerminationValue: p.currToken.TokenLiteral()}
+			p.nextToken()
+			return gt
 		}
 		return nil
 	default:

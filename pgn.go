@@ -11,6 +11,18 @@ type Game struct {
 	result string
 }
 
+func New(pgn string) (*Game, error) {
+	l := NewLexer(pgn)
+	p := NewParser(l)
+	game, err := p.ParsePGN()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return game, nil
+}
+
 func (g *Game) GetTag(name string) string {
 	return g.tags[name]
 }
