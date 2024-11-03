@@ -32,6 +32,10 @@ func (m Move) Type() string {
   return MOVE
 }
 
+func (m Move) String() string {
+  return fmt.Sprintf("%d. %s %s", m.MoveNumber, m.MoveWhite, m.MoveBlack)
+}
+
 //Tag Pair
 
 type TagPair struct {
@@ -67,3 +71,15 @@ Because of this use as an internal separator in strings, the colon should not
 otherwise appear in a string.
 */
 // Check for colon, get players, offer a method to get number of players and their names
+
+type GameTermination struct {
+	TerminationValue string
+}
+
+func (gt GameTermination) Value() string {
+	return gt.TerminationValue
+}
+
+func (gt GameTermination) Type() string {
+  return TERMINATION
+}

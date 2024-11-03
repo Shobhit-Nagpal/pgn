@@ -57,6 +57,10 @@ func (g *Game) Result() string {
 	return g.result
 }
 
+func (g *Game) SetResult(result string) {
+	g.result = result
+}
+
 func (g *Game) GetMove(number int) *Move {
 	return g.moves[number]
 }

@@ -41,6 +41,8 @@ func (p *Parser) ParsePGN() *Game {
 				game.SetTag(v.Name(), v.Value())
 			case *Move:
 				game.SetMove(v.Number(), v)
+			case *GameTermination:
+				game.SetResult(v.Value())
 			}
 		}
 	}
@@ -54,6 +56,13 @@ func (p *Parser) parseStatement() Stmt {
 		return p.parseTagPair()
 	case INTEGER:
 		return p.parseMove()
+	case SYMBOL:
+		if isGameResult(p.currToken.TokenLiteral()) {
+      gt := &GameTermination{TerminationValue: p.currToken.TokenLiteral()}
+      p.nextToken()
+      return gt
+		}
+		return nil
 	default:
 		return nil
 	}
@@ -88,25 +97,33 @@ func (p *Parser) parseTagPair() *TagPair {
 func (p *Parser) parseMove() *Move {
 
 	moveNumInt, err := strconv.Atoi(p.currToken.TokenLiteral())
-  if err != nil {
-    log.Fatalf("Couldn't convert string to integer for moves: %s", p.currToken.TokenLiteral())
-  }
+	if err != nil {
+		log.Fatalf("Couldn't convert string to integer for moves: %s", p.currToken.TokenLiteral())
+	}
 
 	move := &Move{
 		MoveNumber: moveNumInt,
 	}
 
 	//Zero or more periods
-	if !p.expectPeek(PERIOD) {
-		return nil
+	for p.peekTokenIs(PERIOD) {
+		p.nextToken()
 	}
 
 	if !p.expectPeek(SYMBOL) {
 		return nil
 	}
 
+	if isGameResult(p.currToken.TokenLiteral()) {
+		return move
+	}
+
 	move.MoveWhite = p.currToken.TokenLiteral()
 	p.nextToken()
+
+	if isGameResult(p.currToken.TokenLiteral()) {
+		return move
+	}
 
 	move.MoveBlack = p.currToken.TokenLiteral()
 	p.nextToken()
