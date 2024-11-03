@@ -104,6 +104,64 @@ func checkParserErrors(t *testing.T, p *Parser) {
 	t.FailNow()
 }
 
+func TestMovesWithNoPeriods(t *testing.T) {
+	tests := []struct {
+		input              string
+		expectedMoveNumber int
+		expectedMoveWhite  string
+		expectedMoveBlack  string
+	}{
+		{"1 e4 e5", 1, "e4", "e5"},
+		{"2 Nf3 Nc6", 2, "Nf3", "Nc6"},
+		{"3 Bb5 a6", 3, "Bb5", "a6"},
+		{"4 Ba4 Nf6", 4, "Ba4", "Nf6"},
+		{"12 cxb5 axb5", 12, "cxb5", "axb5"},
+		{"24 Bxf7+ Rxf7", 24, "Bxf7+", "Rxf7"},
+	}
+
+	for _, tt := range tests {
+		l := New(tt.input)
+		p := NewParser(l)
+		game := p.ParsePGN()
+		checkParserErrors(t, p)
+
+		if got := game.GetMove(tt.expectedMoveNumber).White(); got != tt.expectedMoveWhite {
+			t.Errorf("GetMove(%q) wrong value. got=%q, want=%q",
+				tt.expectedMoveNumber, got, tt.expectedMoveWhite)
+		}
+
+	}
+}
+
+func TestMovesWithThreePeriods(t *testing.T) {
+	tests := []struct {
+		input              string
+		expectedMoveNumber int
+		expectedMoveWhite  string
+		expectedMoveBlack  string
+	}{
+		{"1... e4 e5", 1, "e4", "e5"},
+		{"2... Nf3 Nc6", 2, "Nf3", "Nc6"},
+		{"3... Bb5 a6", 3, "Bb5", "a6"},
+		{"4... Ba4 Nf6", 4, "Ba4", "Nf6"},
+		{"12... cxb5 axb5", 12, "cxb5", "axb5"},
+		{"24... Bxf7+ Rxf7", 24, "Bxf7+", "Rxf7"},
+	}
+
+	for _, tt := range tests {
+		l := New(tt.input)
+		p := NewParser(l)
+		game := p.ParsePGN()
+		checkParserErrors(t, p)
+
+		if got := game.GetMove(tt.expectedMoveNumber).White(); got != tt.expectedMoveWhite {
+			t.Errorf("GetMove(%q) wrong value. got=%q, want=%q",
+				tt.expectedMoveNumber, got, tt.expectedMoveWhite)
+		}
+
+	}
+}
+
 func TestCompletePGN(t *testing.T) {
 	input := `
   [Event "Live Chess"]
