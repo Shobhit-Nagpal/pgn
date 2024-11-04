@@ -68,7 +68,7 @@ func TestMoves(t *testing.T) {
 		expectedMoveWhite  string
 		expectedMoveBlack  string
 	}{
-		{"1. e4 e5", 1, "e4", "e5"},
+		{"1. e4 $69 e5", 1, "e4", "e5"},
 		{"2. Nf3 Nc6", 2, "Nf3", "Nc6"},
 		{"3. Bb5 a6", 3, "Bb5", "a6"},
 		{"4. Ba4 Nf6", 4, "Ba4", "Nf6"},

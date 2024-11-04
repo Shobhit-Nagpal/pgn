@@ -84,3 +84,27 @@ func (g *Game) SetMove(number int, move *Move) {
 func (g *Game) Moves() map[int]*Move {
 	return g.moves
 }
+
+func (g *Game) IsDraw() bool {
+	if g.result == "1/2-1/2" {
+		return true
+	}
+
+	return false
+}
+
+func (g *Game) Winner() string {
+	if g.result == "1-0" {
+		return "White"
+	}
+
+	if g.result == "0-1" {
+		return "Black"
+	}
+
+	if g.result == "1/2-1/2" {
+		return "Draw"
+	}
+
+	return "Unknown"
+}

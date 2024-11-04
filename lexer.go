@@ -95,7 +95,9 @@ func (l *Lexer) readString() string {
 }
 
 func (l *Lexer) readNAG() string {
-	position := l.position + 1
+  position := l.position + 1
+
+  l.readChar()
 
 	for isDigit(l.ch) {
 		l.readChar()
@@ -109,7 +111,7 @@ func (l *Lexer) readSymbolOrInteger() (string, TokenType) {
 	position := l.position
 
 	for isDigit(l.ch) || isLetter(l.ch) || isSpecialChar(l.ch) {
-		if l.peekChar() == '.' || l.peekChar() == '*' {
+		if l.peekChar() == '.' || l.peekChar() == '*' || l.peekChar() == '$' {
 			flag = true
 			break
 		}

@@ -14,7 +14,7 @@ func TestNextToken(t *testing.T) {
   [Black "Spassky, Boris V."]
   [Result "1/2-1/2"]
 
-  1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3
+  1. e4 $1 e5 $20 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3
   O-O 9. h3 Nb8 10. d4 Nbd7 11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15.
   Nb1 h6 16. Bh4 c5 17. dxe5 Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21.
   Nc4 Nxc4 22. Bxc4 Nb6 23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7
@@ -58,7 +58,9 @@ func TestNextToken(t *testing.T) {
 		{INTEGER, "1"},
 		{PERIOD, "."},
 		{SYMBOL, "e4"},
+		{NAG, "1"},
 		{SYMBOL, "e5"},
+		{NAG, "20"},
 		{INTEGER, "2"},
 		{PERIOD, "."},
 		{SYMBOL, "Nf3"},

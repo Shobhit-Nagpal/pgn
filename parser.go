@@ -42,6 +42,9 @@ func (p *Parser) ParsePGN() (*Game, error) {
 			case *Move:
 				game.SetMove(v.Number(), v)
 			case *GameTermination:
+				if v.Value() != game.GetTag("Result") {
+					p.errors = append(p.errors, "Game termination marker does not match game result in tag pair")
+				}
 				game.SetResult(v.Value())
 			}
 		}
@@ -106,7 +109,9 @@ func (p *Parser) parseMove() *Move {
 	}
 
 	move := &Move{
-		MoveNumber: moveNumInt,
+		MoveNumber:       moveNumInt,
+		WhiteAnnotations: []string{},
+		BlackAnnotations: []string{},
 	}
 
 	//Zero or more periods
@@ -123,6 +128,12 @@ func (p *Parser) parseMove() *Move {
 	}
 
 	move.MoveWhite = p.currToken.TokenLiteral()
+
+	for p.peekTokenIs(NAG) {
+		p.nextToken()
+		move.WhiteAnnotations = append(move.WhiteAnnotations, p.currToken.TokenLiteral())
+	}
+
 	p.nextToken()
 
 	if isGameResult(p.currToken.TokenLiteral()) {
@@ -130,6 +141,12 @@ func (p *Parser) parseMove() *Move {
 	}
 
 	move.MoveBlack = p.currToken.TokenLiteral()
+
+	for p.peekTokenIs(NAG) {
+		p.nextToken()
+		move.BlackAnnotations = append(move.BlackAnnotations, p.currToken.TokenLiteral())
+	}
+
 	p.nextToken()
 
 	return move

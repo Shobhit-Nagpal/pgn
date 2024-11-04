@@ -9,9 +9,11 @@ type Stmt interface {
 // Move
 
 type Move struct {
-	MoveNumber int
-	MoveWhite  string
-	MoveBlack  string
+	MoveNumber       int
+	MoveWhite        string
+	MoveBlack        string
+	WhiteAnnotations []string
+	BlackAnnotations []string
 }
 
 func (m Move) Number() int {
@@ -28,6 +30,18 @@ func (m Move) Black() string {
 
 func (m Move) Type() string {
 	return MOVE
+}
+
+func (m Move) GetAnnotations(color string) []string {
+	if color == "White" {
+		return m.WhiteAnnotations
+	}
+
+	if color == "Black" {
+		return m.BlackAnnotations
+	}
+
+	return []string{}
 }
 
 func (m Move) String() string {
@@ -59,16 +73,7 @@ func (tp TagPair) Type() string {
 	return TAG_PAIR
 }
 
-// The same tag name should not appear more than once in a tag pair section.
-//Probably will use a hashmap for this
-
-/* Some tag values may be composed of a sequence of items. For example, a
-consultation game may have more than one player for a given side. When this
-occurs, the single character ":" (colon) appears between adjacent items.
-Because of this use as an internal separator in strings, the colon should not
-otherwise appear in a string.
-*/
-// Check for colon, get players, offer a method to get number of players and their names
+// Game Termination
 
 type GameTermination struct {
 	TerminationValue string
