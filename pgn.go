@@ -1,10 +1,5 @@
 package pgn
 
-import (
-	"errors"
-	"fmt"
-)
-
 type Game struct {
 	tags   map[string]string
 	moves  map[int]*Move
@@ -27,14 +22,8 @@ func (g *Game) GetTag(name string) string {
 	return g.tags[name]
 }
 
-func (g *Game) SetTag(tag, value string) error {
-	if _, exists := g.tags[tag]; exists {
-		return errors.New(fmt.Sprintf("%s tag already exists in the tag pair section", tag))
-	}
-
+func (g *Game) SetTag(tag, value string) {
 	g.tags[tag] = value
-
-	return nil
 }
 
 func (g *Game) TagPairs() map[string]string {
