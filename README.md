@@ -89,6 +89,10 @@ func main() {
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## Acknowledgements
+
+This module was made by reading the PGN specification provided by [fsmosca](https://github.com/fsmosca/PGN-Standard).
+
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This module is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
