@@ -24,7 +24,7 @@ func TestNextToken(t *testing.T) {
   `
 
 	tests := []struct {
-		expectedType    TokenType
+		expectedType    tokenType
 		expectedLiteral string
 	}{
 		{LBRACKET, "["},
@@ -232,7 +232,7 @@ func TestNextToken(t *testing.T) {
 		{EOF, ""},
 	}
 
-	l := NewLexer(input)
+	l := newLexer(input)
 
 	for i, tt := range tests {
 		tok := l.NextToken()

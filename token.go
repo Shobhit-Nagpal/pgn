@@ -1,13 +1,13 @@
 package pgn
 
-type TokenType string
+type tokenType string
 
-type Token struct {
-	Type    TokenType
+type token struct {
+	Type    tokenType
 	Literal string
 }
 
-func (t Token) TokenLiteral() string {
+func (t token) TokenLiteral() string {
 	return t.Literal
 }
 

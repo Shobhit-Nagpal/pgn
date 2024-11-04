@@ -18,8 +18,8 @@ func TestTagPairs(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := NewLexer(tt.input)
-		p := NewParser(l)
+		l := newLexer(tt.input)
+		p := newParser(l)
 		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
@@ -49,8 +49,8 @@ func TestGetTag(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := NewLexer(tt.input)
-		p := NewParser(l)
+		l := newLexer(tt.input)
+		p := newParser(l)
 		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
@@ -77,8 +77,8 @@ func TestMoves(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := NewLexer(tt.input)
-		p := NewParser(l)
+		l := newLexer(tt.input)
+		p := newParser(l)
 		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
@@ -90,7 +90,7 @@ func TestMoves(t *testing.T) {
 	}
 }
 
-func checkParserErrors(t *testing.T, p *Parser) {
+func checkParserErrors(t *testing.T, p *parser) {
 	errors := p.Errors()
 
 	if len(errors) == 0 {
@@ -120,8 +120,8 @@ func TestMovesWithNoPeriods(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := NewLexer(tt.input)
-		p := NewParser(l)
+		l := newLexer(tt.input)
+		p := newParser(l)
 		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
@@ -149,8 +149,8 @@ func TestMovesWithThreePeriods(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		l := NewLexer(tt.input)
-		p := NewParser(l)
+		l := newLexer(tt.input)
+		p := newParser(l)
 		game, _ := p.ParsePGN()
 		checkParserErrors(t, p)
 
@@ -362,8 +362,8 @@ func TestCompletePGN(t *testing.T) {
 		},
 	}
 
-	l := NewLexer(input)
-	p := NewParser(l)
+	l := newLexer(input)
+	p := newParser(l)
 	game, _ := p.ParsePGN()
 	checkParserErrors(t, p)
 

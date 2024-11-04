@@ -12,8 +12,8 @@ type Game struct {
 }
 
 func New(pgn string) (*Game, error) {
-	l := NewLexer(pgn)
-	p := NewParser(l)
+	l := newLexer(pgn)
+	p := newParser(l)
 	game, err := p.ParsePGN()
 
 	if err != nil {

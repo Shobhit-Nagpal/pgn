@@ -2,7 +2,7 @@ package pgn
 
 import "fmt"
 
-type Stmt interface {
+type stmt interface {
 	Type() string
 }
 
@@ -51,10 +51,10 @@ func (m Move) String() string {
 //Tag Pair
 
 type TagPair struct {
-	LBracket Token
+	LBracket token
 	TagName  string
 	TagValue string
-	RBracket Token
+	RBracket token
 }
 
 func (tp TagPair) Name() string {
@@ -75,14 +75,14 @@ func (tp TagPair) Type() string {
 
 // Game Termination
 
-type GameTermination struct {
+type gameTermination struct {
 	TerminationValue string
 }
 
-func (gt GameTermination) Value() string {
+func (gt gameTermination) Value() string {
 	return gt.TerminationValue
 }
 
-func (gt GameTermination) Type() string {
+func (gt gameTermination) Type() string {
 	return TERMINATION
 }

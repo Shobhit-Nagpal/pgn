@@ -1,14 +1,14 @@
 package pgn
 
-type Lexer struct {
+type lexer struct {
 	input        string
 	position     int  // Current position
 	readPosition int  // Position to read (after current position)
 	ch           byte // Current character under examination
 }
 
-func NewLexer(input string) *Lexer {
-	l := &Lexer{
+func newLexer(input string) *lexer {
+	l := &lexer{
 		input: input,
 	}
 
@@ -16,7 +16,7 @@ func NewLexer(input string) *Lexer {
 	return l
 }
 
-func (l *Lexer) readChar() {
+func (l *lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
@@ -27,8 +27,8 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
-func (l *Lexer) NextToken() Token {
-	var tok Token
+func (l *lexer) NextToken() token {
+	var tok token
 
 	l.skipWhitespace()
 
@@ -72,17 +72,17 @@ func (l *Lexer) NextToken() Token {
 	return tok
 }
 
-func newToken(tokenType TokenType, ch byte) Token {
-	return Token{Type: tokenType, Literal: string(ch)}
+func newToken(tokenType tokenType, ch byte) token {
+	return token{Type: tokenType, Literal: string(ch)}
 }
 
-func (l *Lexer) skipWhitespace() {
+func (l *lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
-func (l *Lexer) readString() string {
+func (l *lexer) readString() string {
 	position := l.position + 1
 	for {
 		l.readChar()
@@ -94,7 +94,7 @@ func (l *Lexer) readString() string {
 	return l.input[position:l.position]
 }
 
-func (l *Lexer) readNAG() string {
+func (l *lexer) readNAG() string {
   position := l.position + 1
 
   l.readChar()
@@ -106,7 +106,7 @@ func (l *Lexer) readNAG() string {
 	return l.input[position:l.position]
 }
 
-func (l *Lexer) readSymbolOrInteger() (string, TokenType) {
+func (l *lexer) readSymbolOrInteger() (string, tokenType) {
 	flag := false
 	position := l.position
 
@@ -136,7 +136,7 @@ func (l *Lexer) readSymbolOrInteger() (string, TokenType) {
 	return tokenLiteral, SYMBOL
 }
 
-func (l *Lexer) peekChar() byte {
+func (l *lexer) peekChar() byte {
 	if l.readPosition >= len(l.input) {
 		return 0
 	} else {

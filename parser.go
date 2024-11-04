@@ -6,17 +6,17 @@ import (
 	"strconv"
 )
 
-type Parser struct {
-	l *Lexer
+type parser struct {
+	l *lexer
 
 	errors []string
 
-	currToken Token
-	peekToken Token
+	currToken token
+	peekToken token
 }
 
-func NewParser(l *Lexer) *Parser {
-	p := &Parser{
+func newParser(l *lexer) *parser {
+	p := &parser{
 		l:      l,
 		errors: []string{},
 	}
@@ -27,7 +27,7 @@ func NewParser(l *Lexer) *Parser {
 	return p
 }
 
-func (p *Parser) ParsePGN() (*Game, error) {
+func (p *parser) ParsePGN() (*Game, error) {
 	game := &Game{
 		tags:  map[string]string{},
 		moves: map[int]*Move{},
@@ -41,7 +41,7 @@ func (p *Parser) ParsePGN() (*Game, error) {
 				game.SetTag(v.Name(), v.Value())
 			case *Move:
 				game.SetMove(v.Number(), v)
-			case *GameTermination:
+			case *gameTermination:
 				if v.Value() != game.GetTag("Result") {
 					p.errors = append(p.errors, "Game termination marker does not match game result in tag pair")
 				}
@@ -57,7 +57,7 @@ func (p *Parser) ParsePGN() (*Game, error) {
 	return game, nil
 }
 
-func (p *Parser) parseStatement() Stmt {
+func (p *parser) parseStatement() stmt {
 	switch p.currToken.Type {
 	case LBRACKET:
 		return p.parseTagPair()
@@ -65,7 +65,7 @@ func (p *Parser) parseStatement() Stmt {
 		return p.parseMove()
 	case SYMBOL:
 		if isGameResult(p.currToken.TokenLiteral()) {
-			gt := &GameTermination{TerminationValue: p.currToken.TokenLiteral()}
+			gt := &gameTermination{TerminationValue: p.currToken.TokenLiteral()}
 			p.nextToken()
 			return gt
 		}
@@ -75,7 +75,7 @@ func (p *Parser) parseStatement() Stmt {
 	}
 }
 
-func (p *Parser) parseTagPair() *TagPair {
+func (p *parser) parseTagPair() *TagPair {
 	tp := &TagPair{
 		LBracket: p.currToken,
 	}
@@ -101,7 +101,7 @@ func (p *Parser) parseTagPair() *TagPair {
 	return tp
 }
 
-func (p *Parser) parseMove() *Move {
+func (p *parser) parseMove() *Move {
 
 	moveNumInt, err := strconv.Atoi(p.currToken.TokenLiteral())
 	if err != nil {
@@ -152,29 +152,29 @@ func (p *Parser) parseMove() *Move {
 	return move
 }
 
-func (p *Parser) Errors() []string {
+func (p *parser) Errors() []string {
 	return p.errors
 }
 
-func (p *Parser) nextToken() {
+func (p *parser) nextToken() {
 	p.currToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
 
-func (p *Parser) currTokenIs(t TokenType) bool {
+func (p *parser) currTokenIs(t tokenType) bool {
 	return p.currToken.Type == t
 }
 
-func (p *Parser) peekTokenIs(t TokenType) bool {
+func (p *parser) peekTokenIs(t tokenType) bool {
 	return p.peekToken.Type == t
 }
 
-func (p *Parser) peekError(t TokenType) {
+func (p *parser) peekError(t tokenType) {
 	msg := fmt.Sprintf("expected next token to be %s, got %s instead\n", t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
 
-func (p *Parser) expectPeek(t TokenType) bool {
+func (p *parser) expectPeek(t tokenType) bool {
 	if p.peekTokenIs(t) {
 		p.nextToken()
 		return true
