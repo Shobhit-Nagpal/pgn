@@ -61,7 +61,7 @@ func (p *parser) parseStatement() stmt {
 	switch p.currToken.Type {
 	case LBRACKET:
 		return p.parseTagPair()
-	case INTEGER:
+	case INTEGER, LBRACE, SEMICOLON:
 		return p.parseMove()
 	case SYMBOL:
 		if isGameResult(p.currToken.TokenLiteral()) {
@@ -103,6 +103,8 @@ func (p *parser) parseTagPair() *TagPair {
 
 func (p *parser) parseMove() *Move {
 
+	p.parseComments()
+
 	moveNumInt, err := strconv.Atoi(p.currToken.TokenLiteral())
 	if err != nil {
 		log.Fatalf("Couldn't convert string to integer for moves: %s", p.currToken.TokenLiteral())
@@ -119,6 +121,8 @@ func (p *parser) parseMove() *Move {
 		p.nextToken()
 	}
 
+	p.parseComments()
+
 	if !p.expectPeek(SYMBOL) {
 		return nil
 	}
@@ -129,12 +133,16 @@ func (p *parser) parseMove() *Move {
 
 	move.MoveWhite = p.currToken.TokenLiteral()
 
+	p.parseComments()
+
 	for p.peekTokenIs(NAG) {
 		p.nextToken()
 		move.WhiteAnnotations = append(move.WhiteAnnotations, p.currToken.TokenLiteral())
 	}
 
 	p.nextToken()
+
+	p.parseComments()
 
 	if isGameResult(p.currToken.TokenLiteral()) {
 		return move
@@ -148,6 +156,8 @@ func (p *parser) parseMove() *Move {
 	}
 
 	p.nextToken()
+
+	p.parseComments()
 
 	return move
 }
@@ -182,4 +192,39 @@ func (p *parser) expectPeek(t tokenType) bool {
 		p.peekError(t)
 		return false
 	}
+}
+
+func (p *parser) parseComments() {
+	parsingComments := true
+	for parsingComments {
+		if p.currTokenIs(LBRACE) {
+			p.parseComment()
+		} else if p.currTokenIs(SEMICOLON) {
+			p.parseRestOfLineComment()
+		} else {
+			parsingComments = false
+		}
+	}
+}
+
+func (p *parser) parseComment() {
+	// Current token is LBRACE
+	nestedBracesCount := 0
+	for !p.peekTokenIs(RBRACE) || nestedBracesCount != 0 {
+		if p.peekTokenIs(LBRACE) {
+			nestedBracesCount++
+		}
+
+		if p.peekTokenIs(RBRACE) {
+			nestedBracesCount--
+		}
+
+		p.nextToken()
+	}
+
+	p.nextToken()
+}
+
+func (p *parser) parseRestOfLineComment() {
+	// Current token is SEMICOLON
 }

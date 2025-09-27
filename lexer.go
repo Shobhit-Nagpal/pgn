@@ -45,12 +45,20 @@ func (l *lexer) NextToken() token {
 		tok = newToken(LPAREN, l.ch)
 	case ')':
 		tok = newToken(RPAREN, l.ch)
+	case '{':
+		tok = newToken(LBRACE, l.ch)
+	case '}':
+		tok = newToken(RBRACE, l.ch)
+	case ';':
+		tok = newToken(SEMICOLON, l.ch)
 	case '<':
 		tok = newToken(LANGLE, l.ch)
 	case '%':
 		tok = newToken(PERCENTAGE, l.ch)
 	case '>':
 		tok = newToken(RANGLE, l.ch)
+	case ':', ',', '-':
+		tok = newToken(MISC, l.ch)
 	case '"':
 		tok.Type = STRING
 		tok.Literal = l.readString()
@@ -95,9 +103,9 @@ func (l *lexer) readString() string {
 }
 
 func (l *lexer) readNAG() string {
-  position := l.position + 1
+	position := l.position + 1
 
-  l.readChar()
+	l.readChar()
 
 	for isDigit(l.ch) {
 		l.readChar()
@@ -111,7 +119,7 @@ func (l *lexer) readSymbolOrInteger() (string, tokenType) {
 	position := l.position
 
 	for isDigit(l.ch) || isLetter(l.ch) || isSpecialChar(l.ch) {
-		if l.peekChar() == '.' || l.peekChar() == '*' || l.peekChar() == '$' {
+		if l.peekChar() == '.' || l.peekChar() == '*' || l.peekChar() == '$' || l.peekChar() == '}' {
 			flag = true
 			break
 		}
