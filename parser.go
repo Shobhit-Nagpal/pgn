@@ -120,7 +120,9 @@ func (p *parser) parseMove() *Move {
 
 	moveNumInt, err := strconv.Atoi(p.currToken.TokenLiteral())
 	if err != nil {
-		log.Fatalf("Couldn't convert string to integer for moves: %s", p.currToken.TokenLiteral())
+		errMsg := fmt.Sprintf("Could not convert string to integer for moves: %s", p.currToken.TokenLiteral())
+		p.errors = append(p.errors, errMsg)
+		moveNumInt = -1
 	}
 
 	move := &Move{
