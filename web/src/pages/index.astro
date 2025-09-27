@@ -1,0 +1,389 @@
+---
+const codeExample = `package main
+
+import (
+    "fmt"
+    "github.com/Shobhit-Nagpal/pgn"
+)
+
+func main() {
+    // Parse a PGN string
+    gameStr := \`[Event "F/S Return Match"]
+[Site "Belgrade, Serbia JUG"]
+[Date "1992.11.04"]
+[Round "29"]
+[White "Fischer, Robert J."]
+[Black "Spassky, Boris V."]
+[Result "1/2-1/2"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 1/2-1/2\`
+    
+    game, err := pgn.New(gameStr)
+    if err != nil {
+        panic(err)
+    }
+    
+    // Access game information
+    fmt.Println("Event:", game.Event())
+    fmt.Println("White Player:", game.White())
+    fmt.Println("Black Player:", game.Black())
+    fmt.Println("Result:", game.Result())
+}`;
+
+const installCommand = "go get github.com/Shobhit-Nagpal/pgn";
+
+const copyToClipboard = `
+function copyInstallCommand() {
+    navigator.clipboard.writeText('${installCommand}').then(() => {
+        const button = document.querySelector('.copy-button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '✓ Copied!';
+        button.classList.add('copied');
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('copied');
+        }, 2000);
+    });
+}
+`;
+
+const methods = [
+    {
+        signature: "New(pgn string) (*Game, error)",
+        description: "Create a new game from PGN string"
+    },
+    {
+        signature: "GetTag(name string) string",
+        description: "Get the value of a specific tag"
+    },
+    {
+        signature: "SetTag(tag, value string)",
+        description: "Set a tag"
+    },
+    {
+        signature: "Event() string",
+        description: "Get the event name"
+    },
+    {
+        signature: "Site() string",
+        description: "Get the site/location"
+    },
+    {
+        signature: "White() string",
+        description: "Get the white player's name"
+    },
+    {
+        signature: "Black() string",
+        description: "Get the black player's name"
+    },
+    {
+        signature: "Result() string",
+        description: "Get the game result"
+    },
+    {
+        signature: "Winner() string",
+        description: "Get the winner (\"White\", \"Black\", \"Draw\", or \"Unknown\")"
+    },
+    {
+        signature: "IsDraw() bool",
+        description: "Check if the game ended in a draw"
+    },
+    {
+        signature: "Moves() map[int]*Move",
+        description: "Get all moves"
+    },
+    {
+        signature: "GetMove(number int) *Move",
+        description: "Get a specific move by number"
+    }
+];
+
+const features = [
+    "Parse PGN format chess games",
+    "Access standard PGN tags (Event, Site, Date, Round, White, Black, Result)",
+    "Custom tag support",
+    "Move tracking with commentary support",
+    "Game result handling",
+    "Zero dependencies"
+];
+---
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>PGN - Chess Game Parser for Go</title>
+    <meta name="description" content="A Go module for parsing and working with chess games in PGN format." />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>pgn</h1>
+            <a href="https://github.com/Shobhit-Nagpal/pgn" class="github-link">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+            </a>
+        </div>
+        
+        <div class="hero">
+            <h1>PGN</h1>
+            <p>A Go module for parsing and working with chess games in PGN format</p>
+            
+            <div class="install-block">
+                <code>{installCommand}</code>
+                <button class="copy-button" onclick="copyInstallCommand()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                        <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                    </svg>
+                    Copy
+                </button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Features</h2>
+            <ul class="features">
+                {features.map(feature => (
+                    <li>{feature}</li>
+                ))}
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Usage</h2>
+            <div class="code-block">
+                <pre><code set:html={codeExample}></code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Methods</h2>
+            <div class="methods">
+                {methods.map(method => (
+                    <div class="method">
+                        <div class="method-signature">{method.signature}</div>
+                        <div class="method-description">{method.description}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>© {new Date().getFullYear()} PGN Package</div>
+            <div>Made with ❤️</div>
+        </div>
+    </div>
+
+    <script set:html={copyToClipboard}></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2563eb;
+        }
+        
+        .github-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #374151;
+        }
+        
+        .github-link svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #2563eb;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+        
+        .install-block {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 60px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .install-block code {
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: #059669;
+            font-size: 1rem;
+            flex: 1;
+        }
+        
+        .copy-button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .copy-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        
+        .copy-button.copied {
+            background: #059669;
+        }
+        
+        .copy-button svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .features {
+            list-style: none;
+            margin-bottom: 60px;
+        }
+        
+        .features li {
+            padding: 8px 0;
+            font-size: 1rem;
+            color: #4b5563;
+        }
+        
+        .features li::before {
+            content: "✓";
+            color: #059669;
+            margin-right: 12px;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 60px;
+            overflow-x: auto;
+        }
+        
+        .code-block pre {
+            color: #f9fafb;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .keyword { color: #93c5fd; }
+        .string { color: #6ee7b7; }
+        .comment { color: #9ca3af; }
+        .function { color: #fbbf24; }
+        
+        .methods {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+        
+        .method {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 16px;
+        }
+        
+        .method-signature {
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .method-description {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 0;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 60px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .container { padding: 0 16px; }
+        }
+    </style>
+</html>
