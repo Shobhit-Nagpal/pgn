@@ -2,7 +2,6 @@ package pgn
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 )
 
