@@ -2,7 +2,6 @@ package pgn
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 )
 
@@ -38,14 +37,20 @@ func (p *parser) ParsePGN() (*Game, error) {
 		if stmt != nil {
 			switch v := stmt.(type) {
 			case *TagPair:
-				game.SetTag(v.Name(), v.Value())
-			case *Move:
-				game.SetMove(v.Number(), v)
-			case *gameTermination:
-				if v.Value() != game.GetTag("Result") {
-					p.errors = append(p.errors, "Game termination marker does not match game result in tag pair")
+				if v != nil {
+					game.SetTag(v.Name(), v.Value())
 				}
-				game.SetResult(v.Value())
+			case *Move:
+				if v != nil {
+					game.SetMove(v.Number(), v)
+				}
+			case *gameTermination:
+				if v != nil {
+					if v.Value() != game.GetTag("Result") {
+						p.errors = append(p.errors, "Game termination marker does not match game result in tag pair")
+					}
+					game.SetResult(v.Value())
+				}
 			}
 		}
 	}
@@ -61,7 +66,7 @@ func (p *parser) parseStatement() stmt {
 	switch p.currToken.Type {
 	case LBRACKET:
 		return p.parseTagPair()
-	case INTEGER:
+	case INTEGER, LBRACE, SEMICOLON:
 		return p.parseMove()
 	case SYMBOL:
 		if isGameResult(p.currToken.TokenLiteral()) {
@@ -103,9 +108,20 @@ func (p *parser) parseTagPair() *TagPair {
 
 func (p *parser) parseMove() *Move {
 
+	if p.currTokenIs(LBRACE) || p.currTokenIs(SEMICOLON) {
+		p.parseComments()
+	}
+
+	if p.peekTokenIs(EOF) {
+		p.nextToken()
+		return nil
+	}
+
 	moveNumInt, err := strconv.Atoi(p.currToken.TokenLiteral())
 	if err != nil {
-		log.Fatalf("Couldn't convert string to integer for moves: %s", p.currToken.TokenLiteral())
+		errMsg := fmt.Sprintf("Could not convert string to integer for moves: %s", p.currToken.TokenLiteral())
+		p.errors = append(p.errors, errMsg)
+		moveNumInt = -1
 	}
 
 	move := &Move{
@@ -119,6 +135,11 @@ func (p *parser) parseMove() *Move {
 		p.nextToken()
 	}
 
+	if p.peekTokenIs(LBRACE) || p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+		p.parseComments()
+	}
+
 	if !p.expectPeek(SYMBOL) {
 		return nil
 	}
@@ -129,12 +150,21 @@ func (p *parser) parseMove() *Move {
 
 	move.MoveWhite = p.currToken.TokenLiteral()
 
+	if p.peekTokenIs(LBRACE) || p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+		p.parseComments()
+	}
+
 	for p.peekTokenIs(NAG) {
 		p.nextToken()
 		move.WhiteAnnotations = append(move.WhiteAnnotations, p.currToken.TokenLiteral())
 	}
 
 	p.nextToken()
+
+	if p.currTokenIs(LBRACE) || p.currTokenIs(SEMICOLON) {
+		p.parseComments()
+	}
 
 	if isGameResult(p.currToken.TokenLiteral()) {
 		return move
@@ -148,6 +178,14 @@ func (p *parser) parseMove() *Move {
 	}
 
 	p.nextToken()
+
+	if p.currTokenIs(LBRACE) || p.currTokenIs(SEMICOLON) {
+		p.parseComments()
+	}
+
+	if p.currTokenIs(NEWLINE) {
+		p.nextToken()
+	}
 
 	return move
 }
@@ -182,4 +220,45 @@ func (p *parser) expectPeek(t tokenType) bool {
 		p.peekError(t)
 		return false
 	}
+}
+
+func (p *parser) parseComments() {
+	parsingComments := true
+
+	for parsingComments {
+		if p.currTokenIs(LBRACE) {
+			p.parseComment()
+		} else if p.currTokenIs(SEMICOLON) {
+			p.parseRestOfLineComment()
+		} else {
+			parsingComments = false
+		}
+	}
+}
+
+func (p *parser) parseComment() {
+	// Current token is LBRACE
+	nestedBracesCount := 0
+	for !p.peekTokenIs(RBRACE) || nestedBracesCount != 0 {
+		if p.peekTokenIs(LBRACE) {
+			nestedBracesCount++
+		}
+
+		if p.peekTokenIs(RBRACE) {
+			nestedBracesCount--
+		}
+
+		p.nextToken()
+	}
+
+	p.nextToken()
+}
+
+func (p *parser) parseRestOfLineComment() {
+	// Current token is SEMICOLON
+	p.l.SetReadNewLine(true)
+	for !p.currTokenIs(NEWLINE) {
+		p.nextToken()
+	}
+	p.l.SetReadNewLine(false)
 }

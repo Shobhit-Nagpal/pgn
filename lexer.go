@@ -5,6 +5,7 @@ type lexer struct {
 	position     int  // Current position
 	readPosition int  // Position to read (after current position)
 	ch           byte // Current character under examination
+	readNewline  bool
 }
 
 func newLexer(input string) *lexer {
@@ -45,12 +46,20 @@ func (l *lexer) NextToken() token {
 		tok = newToken(LPAREN, l.ch)
 	case ')':
 		tok = newToken(RPAREN, l.ch)
+	case '{':
+		tok = newToken(LBRACE, l.ch)
+	case '}':
+		tok = newToken(RBRACE, l.ch)
+	case ';':
+		tok = newToken(SEMICOLON, l.ch)
 	case '<':
 		tok = newToken(LANGLE, l.ch)
 	case '%':
 		tok = newToken(PERCENTAGE, l.ch)
 	case '>':
 		tok = newToken(RANGLE, l.ch)
+	case ':', ',':
+		tok = newToken(MISC, l.ch)
 	case '"':
 		tok.Type = STRING
 		tok.Literal = l.readString()
@@ -63,6 +72,8 @@ func (l *lexer) NextToken() token {
 	default:
 		if isLetter(l.ch) || isDigit(l.ch) {
 			tok.Literal, tok.Type = l.readSymbolOrInteger()
+		} else if l.ch == '\n' && l.readNewline {
+			tok = newToken(NEWLINE, l.ch)
 		} else {
 			tok = newToken(ILLEGAL, l.ch)
 		}
@@ -78,6 +89,10 @@ func newToken(tokenType tokenType, ch byte) token {
 
 func (l *lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		if l.ch == '\n' && l.readNewline {
+			break
+		}
+
 		l.readChar()
 	}
 }
@@ -95,9 +110,9 @@ func (l *lexer) readString() string {
 }
 
 func (l *lexer) readNAG() string {
-  position := l.position + 1
+	position := l.position + 1
 
-  l.readChar()
+	l.readChar()
 
 	for isDigit(l.ch) {
 		l.readChar()
@@ -111,7 +126,7 @@ func (l *lexer) readSymbolOrInteger() (string, tokenType) {
 	position := l.position
 
 	for isDigit(l.ch) || isLetter(l.ch) || isSpecialChar(l.ch) {
-		if l.peekChar() == '.' || l.peekChar() == '*' || l.peekChar() == '$' {
+		if isExistingToken(l.peekChar(), l.readNewline) {
 			flag = true
 			break
 		}
@@ -141,5 +156,24 @@ func (l *lexer) peekChar() byte {
 		return 0
 	} else {
 		return l.input[l.readPosition]
+	}
+}
+
+func (l *lexer) SetReadNewLine(val bool) {
+	l.readNewline = val
+}
+
+func isExistingToken(peekChar byte, readNewline bool) bool {
+	switch peekChar {
+	case '.', '*', '$', '{', '}', ';', ':', ',':
+		return true
+	case '\n':
+		if readNewline {
+			return true
+		} else {
+			return false
+		}
+	default:
+		return false
 	}
 }

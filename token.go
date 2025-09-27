@@ -25,11 +25,20 @@ const (
 	LPAREN = "("
 	RPAREN = ")"
 
+	LBRACE = "{"
+	RBRACE = "}"
+
+	SEMICOLON = ";"
+
 	LANGLE = "<"
 	RANGLE = ">"
 
 	NAG    = "NAG"
 	SYMBOL = "SYMBOL"
+
+	NEWLINE = "NEWLINE"
+
+	MISC = "MISC"
 
 	EOF = "EOF"
 )
