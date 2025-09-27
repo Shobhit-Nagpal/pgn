@@ -38,14 +38,20 @@ func (p *parser) ParsePGN() (*Game, error) {
 		if stmt != nil {
 			switch v := stmt.(type) {
 			case *TagPair:
-				game.SetTag(v.Name(), v.Value())
-			case *Move:
-				game.SetMove(v.Number(), v)
-			case *gameTermination:
-				if v.Value() != game.GetTag("Result") {
-					p.errors = append(p.errors, "Game termination marker does not match game result in tag pair")
+				if v != nil {
+					game.SetTag(v.Name(), v.Value())
 				}
-				game.SetResult(v.Value())
+			case *Move:
+				if v != nil {
+					game.SetMove(v.Number(), v)
+				}
+			case *gameTermination:
+				if v != nil {
+					if v.Value() != game.GetTag("Result") {
+						p.errors = append(p.errors, "Game termination marker does not match game result in tag pair")
+					}
+					game.SetResult(v.Value())
+				}
 			}
 		}
 	}
@@ -103,7 +109,14 @@ func (p *parser) parseTagPair() *TagPair {
 
 func (p *parser) parseMove() *Move {
 
-	p.parseComments()
+	if p.currTokenIs(LBRACE) || p.currTokenIs(SEMICOLON) {
+		p.parseComments()
+	}
+
+	if p.peekTokenIs(EOF) {
+		p.nextToken()
+		return nil
+	}
 
 	moveNumInt, err := strconv.Atoi(p.currToken.TokenLiteral())
 	if err != nil {
@@ -121,7 +134,10 @@ func (p *parser) parseMove() *Move {
 		p.nextToken()
 	}
 
-	p.parseComments()
+	if p.peekTokenIs(LBRACE) || p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+		p.parseComments()
+	}
 
 	if !p.expectPeek(SYMBOL) {
 		return nil
@@ -133,7 +149,10 @@ func (p *parser) parseMove() *Move {
 
 	move.MoveWhite = p.currToken.TokenLiteral()
 
-	p.parseComments()
+	if p.peekTokenIs(LBRACE) || p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+		p.parseComments()
+	}
 
 	for p.peekTokenIs(NAG) {
 		p.nextToken()
@@ -142,7 +161,9 @@ func (p *parser) parseMove() *Move {
 
 	p.nextToken()
 
-	p.parseComments()
+	if p.currTokenIs(LBRACE) || p.currTokenIs(SEMICOLON) {
+		p.parseComments()
+	}
 
 	if isGameResult(p.currToken.TokenLiteral()) {
 		return move
@@ -157,7 +178,13 @@ func (p *parser) parseMove() *Move {
 
 	p.nextToken()
 
-	p.parseComments()
+	if p.currTokenIs(LBRACE) || p.currTokenIs(SEMICOLON) {
+		p.parseComments()
+	}
+
+	if p.currTokenIs(NEWLINE) {
+		p.nextToken()
+	}
 
 	return move
 }
@@ -196,6 +223,7 @@ func (p *parser) expectPeek(t tokenType) bool {
 
 func (p *parser) parseComments() {
 	parsingComments := true
+
 	for parsingComments {
 		if p.currTokenIs(LBRACE) {
 			p.parseComment()
@@ -227,4 +255,9 @@ func (p *parser) parseComment() {
 
 func (p *parser) parseRestOfLineComment() {
 	// Current token is SEMICOLON
+	p.l.SetReadNewLine(true)
+	for !p.currTokenIs(NEWLINE) {
+		p.nextToken()
+	}
+	p.l.SetReadNewLine(false)
 }

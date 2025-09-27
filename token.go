@@ -36,6 +36,8 @@ const (
 	NAG    = "NAG"
 	SYMBOL = "SYMBOL"
 
+	NEWLINE = "NEWLINE"
+
 	MISC = "MISC"
 
 	EOF = "EOF"
